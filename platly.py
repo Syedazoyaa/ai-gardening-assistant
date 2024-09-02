@@ -133,23 +133,23 @@ if st.session_state.selected_plant:
 
 # Garden Placement Planning Tool
 
-st.markdown("<h2 style='font-weight: bold;'>Garden Placement Planning Tool 🌼</h2>", unsafe_allow_html=True)
+# st.markdown("<h2 style='font-weight: bold;'>Garden Placement Planning Tool 🌼</h2>", unsafe_allow_html=True)
 
-uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
-if uploaded_image is not None:
-    image = Image.open(uploaded_image).convert('RGB')
-    image_np = np.array(image)
+# uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
+# if uploaded_image is not None:
+#     image = Image.open(uploaded_image).convert('RGB')
+#     image_np = np.array(image)
 
-    # Analyze the image using YOLO for soil patches and sunlight exposure
-    soil_patch_size, sunlight_exposure, yolo_results = analyze_image_yolo(image_np)
+#     # Analyze the image using YOLO for soil patches and sunlight exposure
+#     soil_patch_size, sunlight_exposure, yolo_results = analyze_image_yolo(image_np)
     
-    # Render YOLO results on the image
-    yolo_results.render()
-    st.image(yolo_results.imgs[0], caption='YOLO Detected Image', use_column_width=True)
+#     # Render YOLO results on the image
+#     yolo_results.render()
+#     st.image(yolo_results.imgs[0], caption='YOLO Detected Image', use_column_width=True)
     
-    # Display analysis results
-    st.subheader("Analysis Results")
-    st.write(f"**Sunlight Exposure:** {sunlight_exposure}")
-    st.write(f"**Largest Soil Patch Size:** {soil_patch_size} pixels")
+#     # Display analysis results
+#     st.subheader("Analysis Results")
+#     st.write(f"**Sunlight Exposure:** {sunlight_exposure}")
+#     st.write(f"**Largest Soil Patch Size:** {soil_patch_size} pixels")
 
-    # Further plant recommendations and placements can be integrated here
+#     # Further plant recommendations and placements can be integrated here
