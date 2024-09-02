@@ -4,6 +4,7 @@ from PIL import Image
 import requests
 import base64
 import google.generativeai as genai
+import cv2
 
 # Google Gemini API setup
 genai.configure(api_key="AIzaSyDODWuZj0Xd8RK4QFPqP4Wttze7Zoyyx6g")
