@@ -145,11 +145,12 @@ def generate_recommendations_and_placements(soil_patch_size, sunlight_exposure):
 # Image upload or capture
 uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
 if uploaded_image is not None:
-    # Read the uploaded image
-    image = Image.open(uploaded_image)
-    
+    # Convert the uploaded image to a format suitable for OpenCV
+    image = Image.open(uploaded_image).convert('RGB')
+    image_np = np.array(image)
+
     # Analyze the image and extract features
-    soil_patch_size, sunlight_exposure = analyze_image(image)
+    soil_patch_size, sunlight_exposure = analyze_image(image_np)
     
     # Generate recommendations and placements
     recommendations = generate_recommendations_and_placements(soil_patch_size, sunlight_exposure)
