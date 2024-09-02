@@ -144,24 +144,24 @@ def generate_recommendations_and_placements(soil_patch_size, sunlight_exposure):
 
 # Image upload or capture
 uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
-if uploaded_image is not None:
-    # Convert the uploaded image to a format suitable for OpenCV
-    image = Image.open(uploaded_image).convert('RGB')
-    image_np = np.array(image)
-
-    # Analyze the image and extract features
-    soil_patch_size, sunlight_exposure = analyze_image(image_np)
+def analyze_image(image_np):
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
     
-    # Generate recommendations and placements
-    recommendations = generate_recommendations_and_placements(soil_patch_size, sunlight_exposure)
+    # Use a threshold to segment the soil patches (you may need to adjust this based on your images)
+    _, thresh = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY_INV)
     
-    # Display the original image
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+    # Find contours (soil patches)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
-    # Display recommendations and placements
-    st.subheader("Plant Recommendations and Placements")
-    st.write(f"**Sunlight Exposure:** {sunlight_exposure}")
-    st.write(f"**Largest Soil Patch Size:** {soil_patch_size} pixels")
-    st.write("**Recommended Plants and Their Placements:**")
-    for recommendation in recommendations:
-        st.write(f"- {recommendation}")
+    # Calculate the size of the largest soil patch
+    if contours:
+        largest_contour = max(contours, key=cv2.contourArea)
+        soil_patch_size = cv2.contourArea(largest_contour)
+    else:
+        soil_patch_size = 0
+    
+    # For simplicity, let's assume sunlight exposure is related to the brightness of the image
+    sunlight_exposure = np.mean(gray)
+    
+    return soil_patch_size, sunlight_exposure
