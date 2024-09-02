@@ -5,6 +5,7 @@ import requests
 import base64
 import google.generativeai as genai
 import cv2
+import torch
 
 # Google Gemini API setup
 genai.configure(api_key="AIzaSyDODWuZj0Xd8RK4QFPqP4Wttze7Zoyyx6g")
@@ -131,43 +132,24 @@ if st.session_state.selected_plant:
     st.markdown(f"<b>{care_guide}</b>", unsafe_allow_html=True)
 
 # Garden Placement Planning Tool
+
 st.markdown("<h2 style='font-weight: bold;'>Garden Placement Planning Tool 🌼</h2>", unsafe_allow_html=True)
 
-def generate_recommendations_and_placements(soil_patch_size, sunlight_exposure):
-    msg = f"Recommend 3 plants and their placements based on the following garden conditions: " \
-          f"Largest Soil Patch Size: {soil_patch_size} pixels, " \
-          f"Sunlight Exposure: {sunlight_exposure}. " \
-          f"Provide the recommendations in the format: Plant Name - Placement - Reason for Placement."
-    response = chatbot.chat(msg)
-    
-    recommendations = response['text'].split('\n')
-    return [rec.strip() for rec in recommendations if rec.strip()]
-
-# Image upload or capture
 uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
-
 if uploaded_image is not None:
-    # Convert the uploaded image to a format suitable for OpenCV
     image = Image.open(uploaded_image).convert('RGB')
     image_np = np.array(image)
 
-    # Analyze the image and extract features
-    soil_patch_size, sunlight_exposure = analyze_image(image_np)
+    # Analyze the image using YOLO for soil patches and sunlight exposure
+    soil_patch_size, sunlight_exposure, yolo_results = analyze_image_yolo(image_np)
     
-    # Debugging: Print out the values for validation
-    st.write(f"Debug: Soil Patch Size = {soil_patch_size}")
-    st.write(f"Debug: Sunlight Exposure = {sunlight_exposure}")
-
-    # Generate recommendations and placements
-    recommendations = generate_recommendations_and_placements(soil_patch_size, sunlight_exposure)
+    # Render YOLO results on the image
+    yolo_results.render()
+    st.image(yolo_results.imgs[0], caption='YOLO Detected Image', use_column_width=True)
     
-    # Display the original image
-    st.image(image, caption='Uploaded Image', use_column_width=True)
-    
-    # Display recommendations and placements
-    st.subheader("Plant Recommendations and Placements")
+    # Display analysis results
+    st.subheader("Analysis Results")
     st.write(f"**Sunlight Exposure:** {sunlight_exposure}")
     st.write(f"**Largest Soil Patch Size:** {soil_patch_size} pixels")
-    st.write("**Recommended Plants and Their Placements:**")
-    for recommendation in recommendations:
-        st.write(f"- {recommendation}")
+
+    # Further plant recommendations and placements can be integrated here
