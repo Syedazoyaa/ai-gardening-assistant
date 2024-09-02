@@ -154,6 +154,10 @@ if uploaded_image is not None:
     # Analyze the image and extract features
     soil_patch_size, sunlight_exposure = analyze_image(image_np)
     
+    # Debugging: Print out the values for validation
+    st.write(f"Debug: Soil Patch Size = {soil_patch_size}")
+    st.write(f"Debug: Sunlight Exposure = {sunlight_exposure}")
+
     # Generate recommendations and placements
     recommendations = generate_recommendations_and_placements(soil_patch_size, sunlight_exposure)
     
