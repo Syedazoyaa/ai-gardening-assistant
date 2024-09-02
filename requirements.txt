@@ -4,3 +4,4 @@ requests
 google-generativeai
 opencv-python-headless
 numpy
+torch
