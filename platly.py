@@ -131,3 +131,36 @@ if st.session_state.selected_plant:
 
 # Garden Placement Planning Tool
 st.markdown("<h2 style='font-weight: bold;'>Garden Placement Planning Tool 🌼</h2>", unsafe_allow_html=True)
+
+def generate_recommendations_and_placements(soil_patch_size, sunlight_exposure):
+    msg = f"Recommend 3 plants and their placements based on the following garden conditions: " \
+          f"Largest Soil Patch Size: {soil_patch_size} pixels, " \
+          f"Sunlight Exposure: {sunlight_exposure}. " \
+          f"Provide the recommendations in the format: Plant Name - Placement - Reason for Placement."
+    response = chatbot.chat(msg)
+    
+    recommendations = response['text'].split('\n')
+    return [rec.strip() for rec in recommendations if rec.strip()]
+
+# Image upload or capture
+uploaded_image = st.file_uploader("Upload an image of your garden space", type=['jpg', 'jpeg', 'png'])
+if uploaded_image is not None:
+    # Read the uploaded image
+    image = Image.open(uploaded_image)
+    
+    # Analyze the image and extract features
+    soil_patch_size, sunlight_exposure = analyze_image(image)
+    
+    # Generate recommendations and placements
+    recommendations = generate_recommendations_and_placements(soil_patch_size, sunlight_exposure)
+    
+    # Display the original image
+    st.image(image, caption='Uploaded Image', use_column_width=True)
+    
+    # Display recommendations and placements
+    st.subheader("Plant Recommendations and Placements")
+    st.write(f"**Sunlight Exposure:** {sunlight_exposure}")
+    st.write(f"**Largest Soil Patch Size:** {soil_patch_size} pixels")
+    st.write("**Recommended Plants and Their Placements:**")
+    for recommendation in recommendations:
+        st.write(f"- {recommendation}")
